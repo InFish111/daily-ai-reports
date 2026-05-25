@@ -25,7 +25,7 @@ jobs:
           
       - name: Install dependencies
         run: |
-          pip install requests jinja2
+          pip install requests jinja2 feedparser beautifulsoup4
           
       - name: Generate daily report
         env:
@@ -39,6 +39,59 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           publish_branch: gh-pages
+          
+      - name: Send notification to Feishu
+        if: success() && env.FEISHU_WEBHOOK != ''
+        env:
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          curl -X POST "$FEISHU_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"msg_type\": \"interactive\",
+              \"card\": {
+                \"header\": {
+                  \"title\": {
+                    \"tag\": \"plain_text\",
+                    \"content\": \"📰 AI 科技日报已生成\"
+                  },
+                  \"template\": \"blue\"
+                },
+                \"elements\": [
+                  {
+                    \"tag\": \"div\",
+                    \"text\": {
+                      \"tag\": \"lark_md\",
+                      \"content\": \"**日期:** $DATE\\n**来源:** AI Hot API\\n**状态:** ✅ 生成成功\"
+                    }
+                  },
+                  {
+                    \"tag\": \"action\",
+                    \"actions\": [
+                      {
+                        \"tag\": \"button\",
+                        \"text\": {
+                          \"tag\": \"plain_text\",
+                          \"content\": \"查看日报\"
+                        },
+                        \"type\": \"primary\",
+                        \"url\": \"https://infish111.github.io/daily-ai-reports/$DATE.html\"
+                      },
+                      {
+                        \"tag\": \"button\",
+                        \"text\": {
+                          \"tag\": \"plain_text\",
+                          \"content\": \"查看存档\"
+                        },
+                        \"type\": \"default\",
+                        \"url\": \"https://infish111.github.io/daily-ai-reports/\"
+                      }
+                    ]
+                  }
+                ]
+              }
+            }" || echo "Feishu notification skipped"
           
       - name: Report status
         if: success()

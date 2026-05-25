@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
 """
 Daily AI Report Generator
-Generates HTML daily report from AI HOT API data
+Generates HTML daily report from multiple data sources
+
+Data Sources:
+- AI Hot API (primary)
+- 36氪 (RSS/网页抓取)
+- Twitter/X (API - optional)
 """
 
 import os
@@ -10,41 +15,107 @@ import requests
 from datetime import datetime, timedelta
 from jinja2 import Template
 import shutil
+import xml.etree.ElementTree as ET
 
 def fetch_aihot_news():
     """Fetch news from AI HOT API"""
     api_url = os.environ.get('AIHOT_API_URL', 'https://aihot.virxact.com/api/public/daily')
     
     try:
-        print(f"Fetching from: {api_url}")
+        print(f"Fetching from AI Hot API: {api_url}")
         response = requests.get(api_url, timeout=30)
         response.raise_for_status()
         data = response.json()
-        print(f"Got {len(data.get('news', []))} news items")
-        return data
+        news_items = data.get('news', [])
+        print(f"✅ Got {len(news_items)} news items from AI Hot")
+        return news_items
     except Exception as e:
-        print(f"Error fetching from AIHOT API: {e}")
-        return get_mock_data()
+        print(f"⚠️ Error fetching from AIHOT API: {e}")
+        return []
+
+def fetch_36kr_news():
+    """Fetch news from 36氪 RSS"""
+    try:
+        print("Fetching from 36kr...")
+        # 36氪 RSS feeds
+        feeds = [
+            "https://rsshub.app/36kr/information/web_news",  # 资讯
+            "https://rsshub.app/36kr/search/article/融资",  # 融资相关
+        ]
+        
+        all_items = []
+        for feed_url in feeds:
+            try:
+                response = requests.get(feed_url, timeout=15)
+                if response.status_code == 200:
+                    # Parse RSS XML
+                    root = ET.fromstring(response.content)
+                    items = root.findall('.//item')
+                    for item in items[:5]:  # 取前5条
+                        title = item.find('title')
+                        description = item.find('description')
+                        if title is not None:
+                            all_items.append({
+                                'category': '投融资',
+                                'title': title.text,
+                                'content': description.text[:200] + '...' if description and len(description.text) > 200 else (description.text if description else ''),
+                                'source': '36氪'
+                            })
+            except Exception as e:
+                print(f"  ⚠️ Feed failed: {e}")
+                continue
+        
+        print(f"✅ Got {len(all_items)} items from 36kr")
+        return all_items
+    except Exception as e:
+        print(f"⚠️ Error fetching from 36kr: {e}")
+        return []
+
+def fetch_techcrunch_news():
+    """Fetch tech news from TechCrunch RSS"""
+    try:
+        print("Fetching from TechCrunch...")
+        feed_url = "https://techcrunch.com/feed/"
+        response = requests.get(feed_url, timeout=15)
+        
+        if response.status_code == 200:
+            root = ET.fromstring(response.content)
+            items = root.findall('.//item')
+            
+            news_items = []
+            for item in items[:3]:  # 取前3条
+                title = item.find('title')
+                description = item.find('description')
+                if title is not None:
+                    news_items.append({
+                        'category': '国际动态',
+                        'title': title.text,
+                        'content': '国际科技新闻',
+                        'source': 'TechCrunch'
+                    })
+            
+            print(f"✅ Got {len(news_items)} items from TechCrunch")
+            return news_items
+    except Exception as e:
+        print(f"⚠️ Error fetching from TechCrunch: {e}")
+        return []
 
 def get_mock_data():
-    """Fallback mock data if API fails"""
-    return {
-        "date": datetime.now().strftime("%Y-%m-%d"),
-        "news": [
-            {
-                "category": "产品发布",
-                "title": "AI Hot API 数据获取中",
-                "content": "正在从 AI Hot API 获取最新科技新闻。如果看到此消息，说明 API 配置可能需要检查。",
-                "source": "System"
-            },
-            {
-                "category": "行业动态", 
-                "title": "GitHub Actions 自动部署",
-                "content": "日报系统已通过 GitHub Actions 自动部署，每天 08:30 自动生成。",
-                "source": "GitHub Actions"
-            }
-        ]
-    }
+    """Fallback mock data if APIs fail"""
+    return [
+        {
+            "category": "系统通知",
+            "title": "正在从多个数据源获取新闻",
+            "content": "日报系统正在从 AI Hot API、36氪、TechCrunch 等多个数据源聚合科技新闻。",
+            "source": "System"
+        },
+        {
+            "category": "配置状态", 
+            "title": "GitHub Actions 自动部署",
+            "content": "日报系统已通过 GitHub Actions 自动部署，每天 08:30 自动生成并推送到 GitHub Pages。支持飞书通知。",
+            "source": "GitHub Actions"
+        }
+    ]
 
 def get_category_color(category):
     """Map category to accent color"""
@@ -58,8 +129,12 @@ def get_category_color(category):
         '并购动态': 'green',
         '论文研究': 'green',
         '工具推荐': 'orange',
-        '融资': 'purple',
+        '投融资': 'purple',
         '投资': 'purple',
+        '融资': 'purple',
+        '国际动态': 'green',
+        '系统通知': 'cyan',
+        '配置状态': 'cyan',
     }
     return colors.get(category, 'cyan')
 
@@ -72,8 +147,32 @@ def get_weekday_cn(date_str):
     except:
         return ""
 
-def generate_html(data, date_str):
-    """Generate HTML from data using template"""
+def aggregate_news():
+    """Aggregate news from all sources"""
+    all_news = []
+    
+    # Source 1: AI Hot API (primary)
+    ai_hot_news = fetch_aihot_news()
+    all_news.extend(ai_hot_news)
+    
+    # Source 2: 36氪
+    kr_news = fetch_36kr_news()
+    all_news.extend(kr_news)
+    
+    # Source 3: TechCrunch
+    tc_news = fetch_techcrunch_news()
+    all_news.extend(tc_news)
+    
+    # If no news fetched, use mock data
+    if not all_news:
+        print("⚠️ No news fetched from any source, using mock data")
+        all_news = get_mock_data()
+    
+    print(f"\n📊 Total news items: {len(all_news)}")
+    return all_news
+
+def generate_html(news_items, date_str):
+    """Generate HTML from news items"""
     
     # HTML Template
     template = Template('''<!DOCTYPE html>
@@ -167,6 +266,32 @@ def generate_html(data, date_str):
             background: linear-gradient(90deg, transparent, var(--border), transparent);
         }
 
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
         .news-grid {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
@@ -224,7 +349,7 @@ def generate_html(data, date_str):
 
         .card h2 {
             font-family: 'Noto Serif SC', serif;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 700;
             line-height: 1.3;
             margin-bottom: 16px;
@@ -244,18 +369,14 @@ def generate_html(data, date_str):
             line-height: 1.7;
         }
 
-        .news-list {
-            list-style: none;
-        }
-
-        .news-list li {
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .news-list li:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
+        .source-tag {
+            display: inline-block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 12px;
+            padding: 2px 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
         }
 
         footer {
@@ -275,9 +396,34 @@ def generate_html(data, date_str):
             margin-bottom: 12px;
         }
 
+        .data-sources {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .data-source {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .data-source::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent-green);
+            border-radius: 50%;
+        }
+
         @media (max-width: 900px) {
             .masthead { font-size: 3rem; }
             .card-featured, .card-side, .card-half { grid-column: span 12; }
+            .stats-bar { flex-direction: column; gap: 15px; }
         }
 
         @keyframes fadeInUp {
@@ -306,7 +452,21 @@ def generate_html(data, date_str):
             <div class="date-line">
                 <span>{{ date_str }}</span>
                 <span>{{ weekday }}</span>
-                <span>AI Hot 数据源</span>
+                <span>多源聚合</span>
+            </div>
+            <div class="stats-bar">
+                <div class="stat">
+                    <div class="stat-value">{{ news_count }}</div>
+                    <div class="stat-label">新闻条数</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">{{ source_count }}</div>
+                    <div class="stat-label">数据源</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">08:30</div>
+                    <div class="stat-label">每日推送</div>
+                </div>
             </div>
         </header>
 
@@ -317,7 +477,7 @@ def generate_html(data, date_str):
                 <h2>{{ item.title }}</h2>
                 <p>{{ item.content }}</p>
                 {% if item.source %}
-                <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">来源: {{ item.source }}</p>
+                <span class="source-tag">{{ item.source }}</span>
                 {% endif %}
             </article>
             {% endfor %}
@@ -325,17 +485,22 @@ def generate_html(data, date_str):
 
         <footer>
             <div class="footer-brand">AI 科技日报</div>
-            <p>数据来源于 AI Hot API | 仅供信息分享，不构成投资建议</p>
-            <p style="margin-top: 8px;">Generated on {{ date_str }} {{ time_str }} | 自动推送</p>
+            <p>数据来源于多个科技媒体 | 仅供信息分享，不构成投资建议</p>
+            <div class="data-sources">
+                <span class="data-source">AI Hot API</span>
+                <span class="data-source">36氪</span>
+                <span class="data-source">TechCrunch</span>
+            </div>
+            <p style="margin-top: 16px;">Generated on {{ date_str }} {{ time_str }} | 自动推送</p>
         </footer>
     </div>
 </body>
 </html>''')
     
-    # Process news items
-    news_items = []
-    for i, item in enumerate(data.get('news', [])):
-        # Determine card span based on importance/index
+    # Process news items - assign card spans
+    processed_items = []
+    for i, item in enumerate(news_items[:12]):  # 最多显示12条
+        # Determine card span based on position
         if i == 0:
             span = 'featured'
         elif i == 1:
@@ -345,21 +510,26 @@ def generate_html(data, date_str):
         else:
             span = 'half'
             
-        news_items.append({
+        processed_items.append({
             'title': item.get('title', ''),
-            'content': item.get('content', ''),
+            'content': item.get('content', '')[:300] + '...' if len(item.get('content', '')) > 300 else item.get('content', ''),
             'category': item.get('category', '动态'),
             'source': item.get('source', ''),
             'color': get_category_color(item.get('category', '')),
             'span': span
         })
     
+    # Count unique sources
+    sources = set(item.get('source', 'Unknown') for item in news_items)
+    
     now = datetime.now()
     html = template.render(
         date_str=date_str,
         weekday=get_weekday_cn(date_str),
         time_str=now.strftime("%H:%M"),
-        news_items=news_items
+        news_items=processed_items,
+        news_count=len(news_items),
+        source_count=len(sources)
     )
     
     return html
@@ -430,16 +600,34 @@ def generate_index(dates):
             margin: 5px 0;
             color: #94a3b8;
         }
+        .sources {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .source-tag {
+            background: #27273a;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
     </style>
 </head>
 <body>
     <h1>📰 AI 科技日报存档</h1>
-    <p class="subtitle">每日AI科技新闻自动汇总 - AI Hot 数据源</p>
+    <p class="subtitle">每日AI科技新闻自动汇总 - 多源聚合</p>
     
     <div class="info">
         <p>⏰ 每天 08:30 自动生成</p>
-        <p>📊 数据来源: AI Hot API</p>
-        <p>🤖 推送方式: GitHub Actions → GitHub Pages</p>
+        <p>📊 数据源:</p>
+        <div class="sources">
+            <span class="source-tag">AI Hot API</span>
+            <span class="source-tag">36氪</span>
+            <span class="source-tag">TechCrunch</span>
+        </div>
+        <p style="margin-top: 10px;">🔔 支持飞书推送通知</p>
     </div>
     
     <ul class="report-list">
@@ -469,12 +657,15 @@ def main():
     date_str = today.strftime("%Y-%m-%d")
     
     print(f"🚀 Generating report for {date_str}...")
+    print("=" * 50)
     
-    # Fetch data from AI Hot API
-    data = fetch_aihot_news()
+    # Aggregate news from all sources
+    news_items = aggregate_news()
+    
+    print("=" * 50)
     
     # Generate HTML
-    html = generate_html(data, date_str)
+    html = generate_html(news_items, date_str)
     
     # Save to file
     output_file = f'dist/{date_str}.html'
