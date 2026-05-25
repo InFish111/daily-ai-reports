@@ -3,23 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 科技日报 - 2026-05-25</title>
+    <title>AI资讯日报 - 2026-05-25</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-primary: #0a0a0f;
-            --bg-secondary: #12121a;
-            --bg-card: #1a1a25;
-            --accent-cyan: #00d4ff;
-            --accent-purple: #a855f7;
-            --accent-orange: #f97316;
-            --accent-green: #22c55e;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --text-muted: #64748b;
-            --border: #27273a;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -27,312 +13,461 @@
         }
 
         body {
-            font-family: 'Noto Sans SC', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-            background-image: 
-                radial-gradient(ellipse 80% 50% at 20% 40%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(0, 212, 255, 0.06) 0%, transparent 50%);
+            font-family: 'Noto Serif SC', 'Noto Sans SC', serif;
+            background: #f5f5f0;
+            color: #1a1a1a;
+            line-height: 1.8;
         }
 
-        .container {
+        .newspaper {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 24px;
+            background: #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
 
-        header {
+        /* Masthead */
+        .masthead {
             text-align: center;
-            padding: 60px 0 50px;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 50px;
+            padding: 30px 40px 20px;
+            border-bottom: 3px double #1a1a1a;
+        }
+
+        .masthead-title {
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .masthead-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #666;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        .masthead-date {
+            font-weight: 600;
+        }
+
+        .masthead-tagline {
+            font-style: italic;
+        }
+
+        /* Main Content */
+        .content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 0;
+        }
+
+        .main-column {
+            padding: 30px 40px;
+            border-right: 1px solid #ddd;
+        }
+
+        .sidebar {
+            padding: 30px;
+            background: #fafafa;
+        }
+
+        /* Breaking News Banner */
+        .breaking-banner {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 12px 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .breaking-icon {
+            width: 24px;
+            height: 24px;
+            background: #ff6b35;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .breaking-text {
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* Headline Article */
+        .headline-article {
+            margin-bottom: 40px;
+        }
+
+        .headline-title {
+            font-size: 2.2rem;
+            font-weight: 900;
+            line-height: 1.3;
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+
+        .headline-subtitle {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .headline-content {
+            font-size: 1rem;
+            text-align: justify;
+            column-count: 2;
+            column-gap: 30px;
+            margin-bottom: 25px;
+        }
+
+        .headline-content p {
+            text-indent: 2em;
+            margin-bottom: 1em;
+        }
+
+        .headline-content p:first-child::first-letter {
+            font-size: 3rem;
+            font-weight: 900;
+            float: left;
+            line-height: 1;
+            padding-right: 10px;
+            color: #1a1a1a;
+        }
+
+        /* Quote Box */
+        .quote-box {
+            background: #f8f8f8;
+            border-left: 4px solid #1a1a1a;
+            padding: 20px 25px;
+            margin: 25px 0;
+            font-style: italic;
+            font-size: 1.1rem;
             position: relative;
         }
 
-        .masthead {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 4.5rem;
-            font-weight: 900;
-            letter-spacing: -0.02em;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-cyan) 50%, var(--accent-purple) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 16px;
-            text-transform: uppercase;
+        .quote-box::before {
+            content: '"';
+            font-size: 4rem;
+            color: #ddd;
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-family: Georgia, serif;
         }
 
-        .tagline {
-            font-size: 1rem;
-            color: var(--text-muted);
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            margin-bottom: 24px;
+        .quote-source {
+            text-align: right;
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 10px;
+            font-style: normal;
         }
 
-        .date-line {
+        /* Tags */
+        .tags {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 20px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
         }
 
-        .date-line::before,
-        .date-line::after {
+        .tag {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tag::after {
+            content: '·';
+            margin-left: 8px;
+        }
+
+        .tag:last-child::after {
             content: '';
-            width: 60px;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--border), transparent);
         }
 
-        .stats-bar {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid var(--border);
+        /* Secondary Articles */
+        .secondary-article {
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
         }
 
-        .stat {
-            text-align: center;
-        }
-
-        .stat-value {
+        .secondary-title {
             font-size: 1.5rem;
             font-weight: 700;
-            color: var(--accent-cyan);
+            margin-bottom: 12px;
+            line-height: 1.4;
         }
 
-        .stat-label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
+        .secondary-content {
+            font-size: 0.95rem;
+            color: #444;
+            text-align: justify;
+        }
+
+        /* Sidebar Sections */
+        .sidebar-section {
+            margin-bottom: 35px;
+        }
+
+        .sidebar-title {
+            font-size: 1rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.1em;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1a1a1a;
+            margin-bottom: 20px;
         }
 
-        .news-grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 24px;
+        .sidebar-item {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #ddd;
         }
 
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 28px;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .sidebar-item:last-child {
+            border-bottom: none;
         }
 
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--accent-color, var(--accent-cyan));
-        }
-
-        .card-featured { grid-column: span 8; }
-        .card-side { grid-column: span 4; }
-        .card-half { grid-column: span 6; }
-        .card-full { grid-column: span 12; }
-
-        .card-cyan { --accent-color: var(--accent-cyan); }
-        .card-purple { --accent-color: var(--accent-purple); }
-        .card-orange { --accent-color: var(--accent-orange); }
-        .card-green { --accent-color: var(--accent-green); }
-
-        .category-tag {
-            display: inline-block;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--accent-color, var(--accent-cyan));
-            margin-bottom: 12px;
-            padding: 4px 10px;
-            border: 1px solid var(--accent-color, var(--accent-cyan));
-            border-radius: 4px;
-            opacity: 0.8;
-        }
-
-        .card h2 {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            line-height: 1.3;
-            margin-bottom: 16px;
-            color: var(--text-primary);
-        }
-
-        .card h3 {
-            font-size: 1.15rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-
-        .card p {
-            color: var(--text-secondary);
+        .sidebar-item-title {
             font-size: 0.95rem;
-            line-height: 1.7;
-        }
-
-        .source-tag {
-            display: inline-block;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 12px;
-            padding: 2px 8px;
-            background: var(--bg-secondary);
-            border-radius: 4px;
-        }
-
-        footer {
-            margin-top: 60px;
-            padding: 40px 0;
-            border-top: 1px solid var(--border);
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.85rem;
-        }
-
-        .footer-brand {
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
+            margin-bottom: 8px;
+            line-height: 1.4;
         }
 
-        .data-sources {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 16px;
-            flex-wrap: wrap;
-        }
-
-        .data-source {
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        .sidebar-item-meta {
             font-size: 0.8rem;
-            color: var(--text-muted);
+            color: #ff6b35;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
 
-        .data-source::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            background: var(--accent-green);
-            border-radius: 50%;
+        .sidebar-item-desc {
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
         }
 
+        /* List items */
+        .bullet-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .bullet-list li {
+            padding: 8px 0 8px 20px;
+            position: relative;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .bullet-list li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #ff6b35;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            border-top: 3px double #1a1a1a;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .footer-logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+
+        /* Responsive */
         @media (max-width: 900px) {
-            .masthead { font-size: 3rem; }
-            .card-featured, .card-side, .card-half { grid-column: span 12; }
-            .stats-bar { flex-direction: column; gap: 15px; }
+            .content {
+                grid-template-columns: 1fr;
+            }
+            .main-column {
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }
+            .headline-content {
+                column-count: 1;
+            }
+            .masthead-title {
+                font-size: 2.5rem;
+            }
         }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .card {
-            animation: fadeInUp 0.6s ease forwards;
-            opacity: 0;
-        }
-
-        .card:nth-child(1) { animation-delay: 0.1s; }
-        .card:nth-child(2) { animation-delay: 0.2s; }
-        .card:nth-child(3) { animation-delay: 0.3s; }
-        .card:nth-child(4) { animation-delay: 0.4s; }
-        .card:nth-child(5) { animation-delay: 0.5s; }
-        .card:nth-child(6) { animation-delay: 0.6s; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1 class="masthead">AI 科技日报</h1>
-            <p class="tagline">Artificial Intelligence Daily</p>
-            <div class="date-line">
-                <span>2026-05-25</span>
-                <span>星期一</span>
-                <span>多源聚合</span>
-            </div>
-            <div class="stats-bar">
-                <div class="stat">
-                    <div class="stat-value">3</div>
-                    <div class="stat-label">新闻条数</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value">1</div>
-                    <div class="stat-label">数据源</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-value">08:30</div>
-                    <div class="stat-label">每日推送</div>
-                </div>
+    <div class="newspaper">
+        <!-- Masthead -->
+        <header class="masthead">
+            <h1 class="masthead-title">AI资讯日报</h1>
+            <div class="masthead-meta">
+                <span class="masthead-date">2026-05-25 · 第145期</span>
+                <span class="masthead-tagline">每日精编 · 洞悉AI变局 · FEI++ 出品</span>
             </div>
         </header>
 
-        <div class="news-grid">
-            
-            <article class="card card-featured card-green">
-                <span class="category-tag">国际动态</span>
-                <h2>Everyone is navigating AI security in real time — even Google</h2>
-                <p>国际科技新闻</p>
-                
-                <span class="source-tag">TechCrunch</span>
-                
-            </article>
-            
-            <article class="card card-side card-green">
-                <span class="category-tag">国际动态</span>
-                <h2>Xreal, Google’s smartglasses partner, thinks it has finally mastered this notoriously tricky industry</h2>
-                <p>国际科技新闻</p>
-                
-                <span class="source-tag">TechCrunch</span>
-                
-            </article>
-            
-            <article class="card card-half card-green">
-                <span class="category-tag">国际动态</span>
-                <h2>6 kitchen gadgets that make adulting feel easier</h2>
-                <p>国际科技新闻</p>
-                
-                <span class="source-tag">TechCrunch</span>
-                
-            </article>
-            
+        <div class="content">
+            <!-- Main Column -->
+            <main class="main-column">
+                <!-- Breaking News Banner -->
+                <div class="breaking-banner">
+                    <div class="breaking-icon">🔥</div>
+                    <span class="breaking-text">今日热点</span>
+                </div>
+
+                <!-- Headline Article -->
+                <article class="headline-article">
+                    <h2 class="headline-title">Anthropic 300亿美元融资即将落地，估值有望破9000亿登顶全球AI第一</h2>
+                    <p class="headline-subtitle">红杉、Dragoneer、Altimeter、Greenoaks联合领投，Q2预计收入109亿美元，首次季度运营盈利</p>
+                    <div class="headline-content">
+                        <p>Anthropic即将完成人工智能史上最大单轮融资。据Bloomberg报道，这家Claude开发商正议以超过9000亿美元的投前估值洽谈超300亿美元融资，由红杉资本、Dragoneer、Greenoaks和Altimeter联合领投。若估值达到上限，Anthropic将首次超越OpenAI的8520亿美元估值，正式登顶全球AI初创企业榜首。值得注意的是，该公司2026年2月估值仅为3800亿美元，三个月内实现了翻倍增长。</p>
+                    </div>
+                    
+                    <div class="tags">
+                        <span class="tag">Anthropic</span>
+                        <span class="tag">融资300亿美元</span>
+                        <span class="tag">估值9000亿</span>
+                        <span class="tag">季度盈利</span>
+                        <span class="tag">红杉资本</span>
+                        <span class="tag">来源：Bloomberg</span>
+                    </div>
+
+                    <div class="quote-box">
+                        Anthropic的估值三个月翻倍至9000亿，标志着AI行业从'谁能融到钱'正式进入'谁能先赚到钱'的新阶段。
+                        <div class="quote-source">— Bloomberg 报道分析</div>
+                    </div>
+                </article>
+
+                <!-- Secondary Articles -->
+                <article class="secondary-article">
+                    <h3 class="secondary-title">教皇发布史上首份AI通谕，Anthropic成梵蒂冈唯一合作伙伴</h3>
+                    <p class="secondary-content">
+                        教皇良十四世于5月25日发布首份通谕《Magnifica Humanitas》（壮丽的人性），主题为"在人工智能时代守护人类位格"。通谕认为AI对人类面貌、声音和共情能力的模仿本身就是伤害，将AI伦理从"技术问题"重新定义"人类学问题"。签署日恰逢教皇良十三世《新事》发布135周年，历史类比意味深远。
+                    </p>
+                    <div class="tags">
+                        <span class="tag">教皇通谕</span>
+                        <span class="tag">Magnifica Humanitas</span>
+                        <span class="tag">Christopher Olah</span>
+                        <span class="tag">AI伦理</span>
+                        <span class="tag">来源：梵蒂冈新闻网</span>
+                    </div>
+                </article>
+
+                <article class="secondary-article">
+                    <h3 class="secondary-title">特朗普签署前数小时取消AI安全行政令，马斯克与扎克伯格幕后紧急游说</h3>
+                    <p class="secondary-content">
+                        5月21日，一场场地已布置、邀请已发出的AI行政令签署仪式在最后数小时被取消。该行政令原计划建立AI模型发布前审查流程，但特朗普表态称"这会形成阻碍，我们正领先中国"。据Axios报道，马斯克、扎克伯格和David Sacks在签署前直接致电总统反对。白宫人士引述特朗普"就是讨厌监管"。
+                    </p>
+                    <div class="tags">
+                        <span class="tag">特朗普</span>
+                        <span class="tag">AI行政令</span>
+                        <span class="tag">马斯克</span>
+                        <span class="tag">扎克伯格</span>
+                        <span class="tag">SpaceX算力合同</span>
+                        <span class="tag">450亿美元</span>
+                        <span class="tag">来源：Axios</span>
+                    </div>
+                </article>
+            </main>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- GitHub Section -->
+                <section class="sidebar-section">
+                    <h3 class="sidebar-title">⚡ GitHub热门</h3>
+                    <div class="sidebar-item">
+                        <div class="sidebar-item-title">Hmbbwn/DeepSeek-TUI</div>
+                        <div class="sidebar-item-meta">★ 26,402 Stars (周增+21,752)</div>
+                        <div class="sidebar-item-desc">
+                            受益于DeepSeek V4发布热潮，这个用Rust编写的终端原生编程Agent以超2万颗星的单周增速登顶全榜第一。项目可在终端内直接运行，无需IDE或浏览器。
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tech News Section -->
+                <section class="sidebar-section">
+                    <h3 class="sidebar-title">⚙️ 技术动态</h3>
+                    <div class="sidebar-item">
+                        <div class="sidebar-item-title">Google搜索迎25年最大改版，AI直接生成视觉内容</div>
+                        <div class="sidebar-item-desc">
+                            Google I/O 2026上，Sundar Pichai宣布搜索业务迎来25年来最大更新。新版搜索可根据查询直接在结果页生成自定义视觉内容、交互式图形甚至迷你应用。
+                        </div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="sidebar-item-title">中国模型占OpenRouter总调用量60%，开源权重领域由中国主导</div>
+                        <div class="sidebar-item-desc">
+                            OpenRouter最新数据显示，中国AI模型在平台总调用量中占比已达60%。Kimi K2.6、DeepSeek V4、GLM-5.1和Qwen 3成为调用量主力。
+                        </div>
+                    </div>
+                </section>
+
+                <!-- People Section -->
+                <section class="sidebar-section">
+                    <h3 class="sidebar-title">💬 人物观点</h3>
+                    <div class="sidebar-item">
+                        <div class="sidebar-item-title">黄仁勋 (Jensen Huang)</div>
+                        <div class="sidebar-item-meta">英伟达CEO三天两番表态</div>
+                        <div class="sidebar-item-desc">
+                            从"不抱任何期望"到"这是巨大的机会"<br><br>
+                            5月20日CNBC专访中，黄仁勋明确告知投资者对中国市场"不要抱任何期望"。但仅三天后在台北松山机场，他话锋一转："如果能服务中国市场会非常棒。"
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Community Section -->
+                <section class="sidebar-section">
+                    <h3 class="sidebar-title">💭 社区热议</h3>
+                    <div class="sidebar-item">
+                        <div class="sidebar-item-title">AI裁员潮继续蔓延：Intuit裁员17%，谁是下一个？</div>
+                        <ul class="bullet-list">
+                            <li><strong>引爆点：</strong>财务软件巨头Intuit宣布裁员17%（约3000人）</li>
+                            <li><strong>效率源：</strong>AI使公司能以更小团队完成相同产出</li>
+                            <li><strong>忧虑源：</strong>AI"让团队更小"的叙事正在成为新常态</li>
+                        </ul>
+                    </div>
+                </section>
+            </aside>
         </div>
 
-        <footer>
-            <div class="footer-brand">AI 科技日报</div>
-            <p>数据来源于多个科技媒体 | 仅供信息分享，不构成投资建议</p>
-            <div class="data-sources">
-                <span class="data-source">AI Hot API</span>
-                <span class="data-source">36氪</span>
-                <span class="data-source">TechCrunch</span>
-            </div>
-            <p style="margin-top: 16px;">Generated on 2026-05-25 13:19 | 自动推送</p>
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-logo">专注AI领域的真实问题与客观动向 · FEI++</div>
+            <p>本内容由AI自动生成，仅供参考</p>
+            <p>Generated on 2026-05-25 14:03 · GitHub Actions 自动部署</p>
         </footer>
     </div>
 </body>

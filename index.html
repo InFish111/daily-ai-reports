@@ -3,106 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 科技日报 - Archive</title>
+    <title>AI资讯日报 - Archive</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Noto Serif SC', serif;
             max-width: 800px;
             margin: 50px auto;
             padding: 20px;
-            background: #0a0a0f;
-            color: #f8fafc;
+            background: #f5f5f0;
         }
         h1 {
-            color: #00d4ff;
-            border-bottom: 2px solid #00d4ff;
-            padding-bottom: 10px;
+            font-size: 2.5rem;
+            text-align: center;
+            border-bottom: 3px double #1a1a1a;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
         }
         .report-list {
             list-style: none;
             padding: 0;
         }
         .report-list li {
-            margin: 10px 0;
-            padding: 15px;
-            background: #1a1a25;
-            border-radius: 8px;
-            border: 1px solid #27273a;
-            transition: transform 0.2s;
+            margin: 20px 0;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            transition: all 0.3s ease;
         }
         .report-list li:hover {
-            transform: translateX(5px);
-            border-color: #00d4ff;
+            transform: translateX(10px);
+            border-left: 4px solid #1a1a1a;
         }
         .report-list a {
-            color: #00d4ff;
+            color: #1a1a1a;
             text-decoration: none;
-            font-size: 1.1em;
-        }
-        .report-list a:hover {
-            text-decoration: underline;
+            font-size: 1.2rem;
+            font-weight: 600;
         }
         .date {
-            color: #64748b;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        .subtitle {
-            color: #94a3b8;
-            margin-bottom: 30px;
-        }
-        .info {
-            background: #1a1a25;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 3px solid #00d4ff;
-            margin-bottom: 30px;
-        }
-        .info p {
-            margin: 5px 0;
-            color: #94a3b8;
-        }
-        .sources {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-        .source-tag {
-            background: #27273a;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            color: #94a3b8;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 8px;
         }
     </style>
 </head>
 <body>
-    <h1>📰 AI 科技日报存档</h1>
-    <p class="subtitle">每日AI科技新闻自动汇总 - 多源聚合</p>
-    
-    <div class="info">
-        <p>⏰ 每天 08:30 自动生成</p>
-        <p>📊 数据源:</p>
-        <div class="sources">
-            <span class="source-tag">AI Hot API</span>
-            <span class="source-tag">36氪</span>
-            <span class="source-tag">TechCrunch</span>
-        </div>
-        <p style="margin-top: 10px;">🔔 支持飞书推送通知</p>
-    </div>
-    
+    <h1>AI资讯日报存档</h1>
     <ul class="report-list">
-        
         <li>
-            <a href="2026-05-25.html">AI 科技日报 - 2026年05月25日</a>
-            <div class="date">2026年05月25日</div>
+            <a href="2026-05-25.html">AI资讯日报 - 2026-05-25</a>
+            <div class="date">报纸风格 · 多源聚合</div>
         </li>
-        
     </ul>
-    
-    <footer style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #27273a; text-align: center; color: #64748b; font-size: 0.85rem;">
-        <p>GitHub: InFish111/daily-ai-reports</p>
-    </footer>
 </body>
 </html>
