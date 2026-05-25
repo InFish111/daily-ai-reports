@@ -62,16 +62,34 @@
             margin: 5px 0;
             color: #94a3b8;
         }
+        .sources {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+        .source-tag {
+            background: #27273a;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
     </style>
 </head>
 <body>
     <h1>📰 AI 科技日报存档</h1>
-    <p class="subtitle">每日AI科技新闻自动汇总 - AI Hot 数据源</p>
+    <p class="subtitle">每日AI科技新闻自动汇总 - 多源聚合</p>
     
     <div class="info">
         <p>⏰ 每天 08:30 自动生成</p>
-        <p>📊 数据来源: AI Hot API</p>
-        <p>🤖 推送方式: GitHub Actions → GitHub Pages</p>
+        <p>📊 数据源:</p>
+        <div class="sources">
+            <span class="source-tag">AI Hot API</span>
+            <span class="source-tag">36氪</span>
+            <span class="source-tag">TechCrunch</span>
+        </div>
+        <p style="margin-top: 10px;">🔔 支持飞书推送通知</p>
     </div>
     
     <ul class="report-list">
