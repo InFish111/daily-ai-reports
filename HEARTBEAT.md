@@ -9,13 +9,19 @@
 - **运行平台**: GitHub Actions
 - **推送目标**: GitHub Pages (https://infish111.github.io/daily-ai-reports/)
 
-### 配置说明
+### ✅ 配置状态: 已启用
 
-#### 1. GitHub Secrets 配置
-需要在仓库设置中配置以下 Secrets:
+#### 1. GitHub Secrets 配置 ✅
+已配置 Secrets:
 - `AIHOT_API_URL`: `https://aihot.virxact.com/api/public/daily`
+- `GITHUB_TOKEN`: 自动提供（用于部署）
 
 配置路径: https://github.com/InFish111/daily-ai-reports/settings/secrets/actions
+
+#### 运行状态
+- **最新构建**: ✅ 成功
+- **部署状态**: ✅ Pages 已更新
+- **访问地址**: https://infish111.github.io/daily-ai-reports/
 
 #### 2. 手动触发
 - 访问: https://github.com/InFish111/daily-ai-reports/actions
