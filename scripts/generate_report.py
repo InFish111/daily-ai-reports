@@ -420,7 +420,7 @@ def generate_newspaper_html(news_items, date_str):
             <h1 class="masthead-title">AI资讯日报</h1>
             <div class="masthead-meta">
                 <span class="masthead-date">{date_str} · 第{(datetime.now() - datetime(2026, 1, 1)).days + 1}期</span>
-                <span class="masthead-tagline">每日精编 · 洞悉AI变局 · FEI++ 出品</span>
+                <span class="masthead-tagline">每日精编 · 洞悉AI变局 · InFish 出品</span>
             </div>
         </header>
 
@@ -549,7 +549,7 @@ def generate_newspaper_html(news_items, date_str):
 
         <!-- Footer -->
         <footer class="footer">
-            <div class="footer-logo">专注AI领域的真实问题与客观动向 · FEI++</div>
+            <div class="footer-logo">专注AI领域的真实问题与客观动向 · InFish</div>
             <p>本内容由AI自动生成，仅供参考</p>
             <p>Generated on {date_str} {datetime.now().strftime("%H:%M")} · GitHub Actions 自动部署</p>
         </footer>
