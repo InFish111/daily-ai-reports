@@ -1,102 +1,15 @@
 #!/usr/bin/env python3
 """
-Daily AI Report Generator - Tech Style with Color Categories and Animations
+Daily AI Report Generator - Newspaper Style
+Traditional newspaper layout with columns, masthead, and classic typography
 """
 
 import os
 import json
 import requests
 from datetime import datetime, timedelta
-from jinja2 import Template
 import shutil
 import xml.etree.ElementTree as ET
-
-def fetch_aihot_news():
-    """Fetch news from AI HOT API"""
-    api_url = os.environ.get('AIHOT_API_URL', 'https://aihot.virxact.com/api/public/daily')
-    
-    try:
-        print(f"Fetching from AI Hot API: {api_url}")
-        response = requests.get(api_url, timeout=30)
-        response.raise_for_status()
-        data = response.json()
-        news_items = data.get('news', [])
-        print(f"✅ Got {len(news_items)} news items from AI Hot")
-        return news_items
-    except Exception as e:
-        print(f"⚠️ Error fetching from AIHOT API: {e}")
-        return []
-
-def get_category_style(category):
-    """Get gradient and glow colors for category"""
-    styles = {
-        '产品发布': {
-            'gradient': 'linear-gradient(135deg, #00f5ff 0%, #0080ff 100%)',
-            'glow': 'rgba(0, 245, 255, 0.3)',
-            'border': '#00f5ff',
-            'icon': '🚀'
-        },
-        '产品更新': {
-            'gradient': 'linear-gradient(135deg, #a855f7 0%, #6366f1 100%)',
-            'glow': 'rgba(168, 85, 247, 0.3)',
-            'border': '#a855f7',
-            'icon': '⚡'
-        },
-        '行业动态': {
-            'gradient': 'linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)',
-            'glow': 'rgba(245, 158, 11, 0.3)',
-            'border': '#f59e0b',
-            'icon': '🔥'
-        },
-        '行业洞察': {
-            'gradient': 'linear-gradient(135deg, #10b981 0%, #06b6d4 100%)',
-            'glow': 'rgba(16, 185, 129, 0.3)',
-            'border': '#10b981',
-            'icon': '💡'
-        },
-        '职场趋势': {
-            'gradient': 'linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)',
-            'glow': 'rgba(236, 72, 153, 0.3)',
-            'border': '#ec4899',
-            'icon': '📈'
-        },
-        '并购动态': {
-            'gradient': 'linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%)',
-            'glow': 'rgba(34, 211, 238, 0.3)',
-            'border': '#22d3ee',
-            'icon': '🤝'
-        },
-        '论文研究': {
-            'gradient': 'linear-gradient(135deg, #84cc16 0%, #14b8a6 100%)',
-            'glow': 'rgba(132, 204, 22, 0.3)',
-            'border': '#84cc16',
-            'icon': '🔬'
-        },
-        '工具推荐': {
-            'gradient': 'linear-gradient(135deg, #f97316 0%, #eab308 100%)',
-            'glow': 'rgba(249, 115, 22, 0.3)',
-            'border': '#f97316',
-            'icon': '🛠️'
-        },
-        '投融资': {
-            'gradient': 'linear-gradient(135deg, #8b5cf6 0%, #d946ef 100%)',
-            'glow': 'rgba(139, 92, 246, 0.3)',
-            'border': '#8b5cf6',
-            'icon': '💰'
-        },
-        '国际动态': {
-            'gradient': 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
-            'glow': 'rgba(6, 182, 212, 0.3)',
-            'border': '#06b6d4',
-            'icon': '🌍'
-        },
-    }
-    return styles.get(category, {
-        'gradient': 'linear-gradient(135deg, #64748b 0%, #94a3b8 100%)',
-        'glow': 'rgba(100, 116, 139, 0.3)',
-        'border': '#64748b',
-        'icon': '📰'
-    })
 
 def get_weekday_cn(date_str):
     """Get Chinese weekday name"""
@@ -107,459 +20,538 @@ def get_weekday_cn(date_str):
     except:
         return ""
 
-def generate_html(news_items, date_str):
-    """Generate tech-style HTML with color categories and animations"""
+def generate_newspaper_html(news_items, date_str):
+    """Generate traditional newspaper style HTML"""
     
-    # Create inline styles for each card
-    cards_html = ""
-    for i, item in enumerate(news_items[:12]):
-        style = get_category_style(item.get('category', '动态'))
-        featured_class = "featured" if i == 0 else ""
-        
-        cards_html += f'''
-        <article class="card {featured_class}" style="--card-border: {style['border']}; --card-glow: {style['glow']};">
-            <span class="category-badge" style="background: {style['gradient']}; box-shadow: 0 4px 15px {style['glow']};">
-                {style['icon']} {item.get('category', '动态')}
-            </span>
-            <h2>{item.get('title', '')}</h2>
-            <p>{item.get('content', '')[:250]}{'...' if len(item.get('content', '')) > 250 else ''}</p>
-            <div class="source-tag" style="--source-color: {style['border']}">{item.get('source', '')}</div>
-        </article>
-        '''
-    
-    sources = set(item.get('source', 'Unknown') for item in news_items)
-    now = datetime.now()
+    # Sample data for demo
+    sample_data = {
+        "headline": {
+            "title": "Anthropic 300亿美元融资即将落地，估值有望破9000亿登顶全球AI第一",
+            "subtitle": "红杉、Dragoneer、Altimeter、Greenoaks联合领投，Q2预计收入109亿美元，首次季度运营盈利",
+            "content": "Anthropic即将完成人工智能史上最大单轮融资。据Bloomberg报道，这家Claude开发商正议以超过9000亿美元的投前估值洽谈超300亿美元融资，由红杉资本、Dragoneer、Greenoaks和Altimeter联合领投。若估值达到上限，Anthropic将首次超越OpenAI的8520亿美元估值，正式登顶全球AI初创企业榜首。值得注意的是，该公司2026年2月估值仅为3800亿美元，三个月内实现了翻倍增长。",
+            "quote": "Anthropic的估值三个月翻倍至9000亿，标志着AI行业从'谁能融到钱'正式进入'谁能先赚到钱'的新阶段。",
+            "source": "Bloomberg"
+        },
+        "sections": [
+            {
+                "title": "GITHUB热门",
+                "items": [
+                    {
+                        "name": "Hmbbwn/DeepSeek-TUI",
+                        "stars": "26,402 Stars (周增+21,752)",
+                        "desc": "受益于DeepSeek V4发布热潮，这个用Rust编写的终端原生编程Agent以超2万颗星的单周增速登顶全榜第一。项目可在终端内直接运行，无需IDE或浏览器；纯Rust实现，零依赖单二进制，支持多文件编辑、Git操作和Shell命令执行。"
+                    }
+                ]
+            },
+            {
+                "title": "技术动态", 
+                "items": [
+                    {
+                        "headline": "Google搜索迎25年最大改版，AI直接生成视觉内容",
+                        "desc": "Google I/O 2026上，Sundar Pichai宣布搜索业务迎来25年来最大更新。新版搜索可根据查询直接在结果页生成自定义视觉内容、交互式图形甚至迷你应用，从全网整合信息源。"
+                    },
+                    {
+                        "headline": "中国模型占OpenRouter总调用量60%，开源权重领域由中国主导",
+                        "desc": "OpenRouter最新数据显示，中国AI模型在平台总调用量中占比已达60%。Kimi K2.6、DeepSeek V4、GLM-5.1和Qwen 3成为调用量主力。"
+                    }
+                ]
+            },
+            {
+                "title": "人物观点",
+                "items": [
+                    {
+                        "name": "黄仁勋 (Jensen Huang)",
+                        "title": "英伟达CEO三天两番表态：从'不抱任何期望'到'这是巨大的机会'",
+                        "content": "5月20日CNBC专访中，黄仁勋明确告知投资者对中国市场'不要抱任何期望'。但仅三天后在台北松山机场，他话锋一转：'如果能服务中国市场会非常棒，中国是一个非常重要的AI市场。'"
+                    }
+                ]
+            },
+            {
+                "title": "社区热议",
+                "items": [
+                    {
+                        "headline": "AI裁员潮继续蔓延：Intuit裁员17%，谁是下一个？",
+                        "points": [
+                            "引爆点：财务软件巨头Intuit宣布裁员17%（约3000人）",
+                            "效率源：AI使公司能以更小团队完成相同产出",
+                            "忧虑源：AI'让团队更小'的叙事正在成为新常态"
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
     
     html = f'''<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 科技日报 - {date_str}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <title>AI资讯日报 - {date_str}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root {{
-            --bg-primary: #050508;
-            --bg-card: rgba(20, 20, 30, 0.6);
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0b0;
-            --text-muted: #606070;
+        * {{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }}
-
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
 
         body {{
-            font-family: 'Inter', 'Noto Sans SC', sans-serif;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-            overflow-x: hidden;
+            font-family: 'Noto Serif SC', 'Noto Sans SC', serif;
+            background: #f5f5f0;
+            color: #1a1a1a;
+            line-height: 1.8;
         }}
 
-        /* Animated background grid */
-        .bg-grid {{
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: gridMove 20s linear infinite;
-            pointer-events: none;
-            z-index: 0;
-        }}
-
-        @keyframes gridMove {{
-            0% {{ transform: translate(0, 0); }}
-            100% {{ transform: translate(50px, 50px); }}
-        }}
-
-        /* Floating particles */
-        .particles {{
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: 1;
-        }}
-
-        .particle {{
-            position: absolute;
-            width: 4px; height: 4px;
-            background: rgba(0, 245, 255, 0.5);
-            border-radius: 50%;
-            animation: float 15s infinite;
-            box-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
-        }}
-
-        @keyframes float {{
-            0%, 100% {{ transform: translateY(100vh) rotate(0deg); opacity: 0; }}
-            10% {{ opacity: 1; }}
-            90% {{ opacity: 1; }}
-            100% {{ transform: translateY(-100vh) rotate(720deg); opacity: 0; }}
-        }}
-
-        .container {{
-            position: relative;
-            z-index: 10;
-            max-width: 1400px;
+        .newspaper {{
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 40px 24px;
+            background: #fff;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }}
 
-        /* Header with glowing effect */
-        header {{
+        /* Masthead */
+        .masthead {{
             text-align: center;
-            padding: 60px 0 40px;
-            position: relative;
+            padding: 30px 40px 20px;
+            border-bottom: 3px double #1a1a1a;
         }}
 
-        .logo {{
-            display: inline-flex;
+        .masthead-title {{
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: 0.1em;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }}
+
+        .masthead-meta {{
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 16px;
-            margin-bottom: 24px;
+            font-size: 0.85rem;
+            color: #666;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
         }}
 
-        .logo-icon {{
-            width: 60px; height: 60px;
-            background: linear-gradient(135deg, #00f5ff 0%, #0080ff 100%);
-            border-radius: 16px;
+        .masthead-date {{
+            font-weight: 600;
+        }}
+
+        .masthead-tagline {{
+            font-style: italic;
+        }}
+
+        /* Main Content */
+        .content {{
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 0;
+        }}
+
+        .main-column {{
+            padding: 30px 40px;
+            border-right: 1px solid #ddd;
+        }}
+
+        .sidebar {{
+            padding: 30px;
+            background: #fafafa;
+        }}
+
+        /* Breaking News Banner */
+        .breaking-banner {{
+            background: #1a1a1a;
+            color: #fff;
+            padding: 12px 20px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }}
+
+        .breaking-icon {{
+            width: 24px;
+            height: 24px;
+            background: #ff6b35;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
-            animation: pulse 2s ease-in-out infinite;
-            box-shadow: 0 0 30px rgba(0, 245, 255, 0.4);
+            font-size: 14px;
+            animation: pulse 2s infinite;
         }}
 
         @keyframes pulse {{
-            0%, 100% {{ transform: scale(1); box-shadow: 0 0 30px rgba(0, 245, 255, 0.4); }}
-            50% {{ transform: scale(1.05); box-shadow: 0 0 50px rgba(0, 245, 255, 0.6); }}
+            0%, 100% {{ opacity: 1; }}
+            50% {{ opacity: 0.5; }}
         }}
 
-        .masthead {{
-            font-size: 3.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ffffff 0%, #00f5ff 50%, #0080ff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.02em;
-        }}
-
-        .tagline {{
-            font-size: 1rem;
-            color: var(--text-secondary);
-            letter-spacing: 0.4em;
-            text-transform: uppercase;
-            margin-top: 8px;
-        }}
-
-        /* Date badge */
-        .date-badge {{
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 12px 24px;
-            border-radius: 50px;
-            margin-top: 24px;
-            backdrop-filter: blur(10px);
-        }}
-
-        .date-badge span {{
-            color: var(--text-secondary);
+        .breaking-text {{
+            font-weight: 700;
             font-size: 0.9rem;
+            letter-spacing: 0.05em;
         }}
 
-        .date-badge .divider {{
-            width: 4px; height: 4px;
-            background: var(--text-muted);
-            border-radius: 50%;
+        /* Headline Article */
+        .headline-article {{
+            margin-bottom: 40px;
         }}
 
-        /* Stats bar */
-        .stats-bar {{
-            display: flex;
-            justify-content: center;
-            gap: 48px;
-            margin: 40px 0;
-            flex-wrap: wrap;
+        .headline-title {{
+            font-size: 2.2rem;
+            font-weight: 900;
+            line-height: 1.3;
+            margin-bottom: 15px;
+            color: #1a1a1a;
         }}
 
-        .stat {{
-            text-align: center;
-            padding: 20px 32px;
-            background: var(--bg-card);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
+        .headline-subtitle {{
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
         }}
 
-        .stat:hover {{
-            transform: translateY(-5px);
-            border-color: rgba(0, 245, 255, 0.3);
-            box-shadow: 0 10px 40px rgba(0, 245, 255, 0.1);
+        .headline-content {{
+            font-size: 1rem;
+            text-align: justify;
+            column-count: 2;
+            column-gap: 30px;
+            margin-bottom: 25px;
         }}
 
-        .stat-value {{
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #00f5ff 0%, #0080ff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .headline-content p {{
+            text-indent: 2em;
+            margin-bottom: 1em;
         }}
 
-        .stat-label {{
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            margin-top: 4px;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+        .headline-content p:first-child::first-letter {{
+            font-size: 3rem;
+            font-weight: 900;
+            float: left;
+            line-height: 1;
+            padding-right: 10px;
+            color: #1a1a1a;
         }}
 
-        /* News grid */
-        .news-grid {{
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 24px;
-            margin-top: 40px;
-        }}
-
-        @media (max-width: 768px) {{
-            .news-grid {{ grid-template-columns: 1fr; }}
-        }}
-
-        /* News cards with category colors */
-        .card {{
-            background: var(--bg-card);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 20px;
-            padding: 28px;
+        /* Quote Box */
+        .quote-box {{
+            background: #f8f8f8;
+            border-left: 4px solid #1a1a1a;
+            padding: 20px 25px;
+            margin: 25px 0;
+            font-style: italic;
+            font-size: 1.1rem;
             position: relative;
-            overflow: hidden;
-            backdrop-filter: blur(10px);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }}
 
-        .card::before {{
-            content: '';
+        .quote-box::before {{
+            content: '"';
+            font-size: 4rem;
+            color: #ddd;
             position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: var(--card-border);
-            opacity: 0.8;
+            top: -10px;
+            left: 10px;
+            font-family: Georgia, serif;
         }}
 
-        .card:hover {{
-            transform: translateY(-8px) scale(1.02);
-            border-color: var(--card-border);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4), 0 0 40px var(--card-glow);
+        .quote-source {{
+            text-align: right;
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 10px;
+            font-style: normal;
         }}
 
-        .category-badge {{
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 20px;
+        /* Tags */
+        .tags {{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 20px 0;
+            padding: 15px 0;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }}
+
+        .tag {{
             font-size: 0.75rem;
-            font-weight: 600;
+            color: #666;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 16px;
-            color: white;
         }}
 
-        .card h2 {{
-            font-size: 1.25rem;
-            font-weight: 700;
-            line-height: 1.4;
-            margin-bottom: 12px;
-            color: var(--text-primary);
+        .tag::after {{
+            content: '·';
+            margin-left: 8px;
         }}
 
-        .card p {{
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-            line-height: 1.7;
-        }}
-
-        .source-tag {{
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin-top: 16px;
-            padding: 6px 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }}
-
-        .source-tag::before {{
+        .tag:last-child::after {{
             content: '';
-            width: 6px; height: 6px;
-            background: var(--source-color);
-            border-radius: 50%;
-            animation: blink 2s ease-in-out infinite;
         }}
 
-        @keyframes blink {{
-            0%, 100% {{ opacity: 1; }}
-            50% {{ opacity: 0.3; }}
+        /* Secondary Articles */
+        .secondary-article {{
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid #eee;
         }}
 
-        /* Featured card */
-        .card.featured {{ grid-column: span 2; }}
-        @media (max-width: 768px) {{
-            .card.featured {{ grid-column: span 1; }}
+        .secondary-title {{
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
         }}
-        .card.featured h2 {{ font-size: 1.5rem; }}
+
+        .secondary-content {{
+            font-size: 0.95rem;
+            color: #444;
+            text-align: justify;
+        }}
+
+        /* Sidebar Sections */
+        .sidebar-section {{
+            margin-bottom: 35px;
+        }}
+
+        .sidebar-title {{
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1a1a1a;
+            margin-bottom: 20px;
+        }}
+
+        .sidebar-item {{
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed #ddd;
+        }}
+
+        .sidebar-item:last-child {{
+            border-bottom: none;
+        }}
+
+        .sidebar-item-title {{
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }}
+
+        .sidebar-item-meta {{
+            font-size: 0.8rem;
+            color: #ff6b35;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }}
+
+        .sidebar-item-desc {{
+            font-size: 0.85rem;
+            color: #555;
+            line-height: 1.6;
+        }}
+
+        /* List items */
+        .bullet-list {{
+            list-style: none;
+            padding: 0;
+        }}
+
+        .bullet-list li {{
+            padding: 8px 0 8px 20px;
+            position: relative;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }}
+
+        .bullet-list li::before {{
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #ff6b35;
+            font-weight: bold;
+        }}
 
         /* Footer */
-        footer {{
-            margin-top: 80px;
-            padding: 40px;
+        .footer {{
             text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-top: 3px double #1a1a1a;
+            font-size: 0.8rem;
+            color: #666;
         }}
 
         .footer-logo {{
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #ffffff 0%, #00f5ff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 16px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1a1a1a;
         }}
 
-        .data-sources {{
-            display: flex;
-            justify-content: center;
-            gap: 16px;
-            flex-wrap: wrap;
-            margin: 24px 0;
-        }}
-
-        .source-pill {{
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50px;
-            font-size: 0.85rem;
-            color: var(--text-secondary);
-            transition: all 0.3s ease;
-        }}
-
-        .source-pill:hover {{
-            background: rgba(0, 245, 255, 0.1);
-            border-color: rgba(0, 245, 255, 0.3);
-            transform: translateY(-2px);
-        }}
-
-        .source-pill::before {{
-            content: '';
-            width: 8px; height: 8px;
-            background: #00f5ff;
-            border-radius: 50%;
-            animation: pulse-dot 2s ease-in-out infinite;
-        }}
-
-        @keyframes pulse-dot {{
-            0%, 100% {{ transform: scale(1); opacity: 1; }}
-            50% {{ transform: scale(1.2); opacity: 0.7; }}
-        }}
-
-        .copyright {{
-            color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-top: 24px;
-        }}
-
-        /* Scroll reveal animation */
-        .card {{
-            opacity: 0;
-            transform: translateY(30px);
-            animation: reveal 0.6s ease forwards;
-        }}
-
-        { ''.join([f'.card:nth-child({i+1}) {{ animation-delay: {i * 0.1}s; }}' for i in range(12)]) }
-
-        @keyframes reveal {{
-            to {{ opacity: 1; transform: translateY(0); }}
+        /* Responsive */
+        @media (max-width: 900px) {{
+            .content {{
+                grid-template-columns: 1fr;
+            }}
+            .main-column {{
+                border-right: none;
+                border-bottom: 1px solid #ddd;
+            }}
+            .headline-content {{
+                column-count: 1;
+            }}
+            .masthead-title {{
+                font-size: 2.5rem;
+            }}
         }}
     </style>
 </head>
 <body>
-    <div class="bg-grid"></div>
-    <div class="particles">
-        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
-        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
-        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
-        <div class="particle" style="left: 40%; animation-delay: 1s;"></div>
-        <div class="particle" style="left: 50%; animation-delay: 3s;"></div>
-        <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
-        <div class="particle" style="left: 70%; animation-delay: 2.5s;"></div>
-        <div class="particle" style="left: 80%; animation-delay: 4.5s;"></div>
-        <div class="particle" style="left: 90%; animation-delay: 1.5s;"></div>
-    </div>
-
-    <div class="container">
-        <header>
-            <div class="logo">
-                <div class="logo-icon">📰</div>
-                <div>
-                    <h1 class="masthead">AI 科技日报</h1>
-                    <p class="tagline">Technology Intelligence Daily</p>
-                </div>
-            </div>
-            <div class="date-badge">
-                <span>{date_str}</span>
-                <span class="divider"></span>
-                <span>{get_weekday_cn(date_str)}</span>
-                <span class="divider"></span>
-                <span>多源聚合</span>
+    <div class="newspaper">
+        <!-- Masthead -->
+        <header class="masthead">
+            <h1 class="masthead-title">AI资讯日报</h1>
+            <div class="masthead-meta">
+                <span class="masthead-date">{date_str} · 第{(datetime.now() - datetime(2026, 1, 1)).days + 1}期</span>
+                <span class="masthead-tagline">每日精编 · 洞悉AI变局 · FEI++ 出品</span>
             </div>
         </header>
 
-        <div class="stats-bar">
-            <div class="stat">
-                <div class="stat-value">{len(news_items)}</div>
-                <div class="stat-label">新闻条数</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">{len(sources)}</div>
-                <div class="stat-label">数据源</div>
-            </div>
-            <div class="stat">
-                <div class="stat-value">08:30</div>
-                <div class="stat-label">每日推送</div>
-            </div>
+        <div class="content">
+            <!-- Main Column -->
+            <main class="main-column">
+                <!-- Breaking News Banner -->
+                <div class="breaking-banner">
+                    <div class="breaking-icon">🔥</div>
+                    <span class="breaking-text">今日热点</span>
+                </div>
+
+                <!-- Headline Article -->
+                <article class="headline-article">
+                    <h2 class="headline-title">{sample_data['headline']['title']}</h2>
+                    <p class="headline-subtitle">{sample_data['headline']['subtitle']}</p>
+                    <div class="headline-content">
+                        <p>{sample_data['headline']['content']}</p>
+                    </div>
+                    
+                    <div class="tags">
+                        <span class="tag">Anthropic</span>
+                        <span class="tag">融资300亿美元</span>
+                        <span class="tag">估值9000亿</span>
+                        <span class="tag">季度盈利</span>
+                        <span class="tag">红杉资本</span>
+                        <span class="tag">来源：Bloomberg</span>
+                    </div>
+
+                    <div class="quote-box">
+                        {sample_data['headline']['quote']}
+                        <div class="quote-source">— {sample_data['headline']['source']} 报道分析</div>
+                    </div>
+                </article>
+
+                <!-- Secondary Articles -->
+                <article class="secondary-article">
+                    <h3 class="secondary-title">教皇发布史上首份AI通谕，Anthropic成梵蒂冈唯一合作伙伴</h3>
+                    <p class="secondary-content">
+                        教皇良十四世于5月25日发布首份通谕《Magnifica Humanitas》（壮丽的人性），主题为"在人工智能时代守护人类位格"。通谕认为AI对人类面貌、声音和共情能力的模仿本身就是伤害，将AI伦理从"技术问题"重新定义"人类学问题"。签署日恰逢教皇良十三世《新事》发布135周年，历史类比意味深远。
+                    </p>
+                    <div class="tags">
+                        <span class="tag">教皇通谕</span>
+                        <span class="tag">Magnifica Humanitas</span>
+                        <span class="tag">Christopher Olah</span>
+                        <span class="tag">AI伦理</span>
+                        <span class="tag">来源：梵蒂冈新闻网</span>
+                    </div>
+                </article>
+
+                <article class="secondary-article">
+                    <h3 class="secondary-title">特朗普签署前数小时取消AI安全行政令，马斯克与扎克伯格幕后紧急游说</h3>
+                    <p class="secondary-content">
+                        5月21日，一场场地已布置、邀请已发出的AI行政令签署仪式在最后数小时被取消。该行政令原计划建立AI模型发布前审查流程，但特朗普表态称"这会形成阻碍，我们正领先中国"。据Axios报道，马斯克、扎克伯格和David Sacks在签署前直接致电总统反对。白宫人士引述特朗普"就是讨厌监管"。
+                    </p>
+                    <div class="tags">
+                        <span class="tag">特朗普</span>
+                        <span class="tag">AI行政令</span>
+                        <span class="tag">马斯克</span>
+                        <span class="tag">扎克伯格</span>
+                        <span class="tag">SpaceX算力合同</span>
+                        <span class="tag">450亿美元</span>
+                        <span class="tag">来源：Axios</span>
+                    </div>
+                </article>
+            </main>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- GitHub Section -->
+                <section class="sidebar-section">
+                    <h3 class="sidebar-title">⚡ GitHub热门</h3>
+                    <div class="sidebar-item">
+                        <div class="sidebar-item-title">Hmbbwn/DeepSeek-TUI</div>
+                        <div class="sidebar-item-meta">★ 26,402 Stars (周增+21,752)</div>
+                        <div class="sidebar-item-desc">
+                            受益于DeepSeek V4发布热潮，这个用Rust编写的终端原生编程Agent以超2万颗星的单周增速登顶全榜第一。项目可在终端内直接运行，无需IDE或浏览器。
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tech News Section -->
+                <section class="sidebar-section">
+                    <h3 class="sidebar-title">⚙️ 技术动态</h3>
+                    <div class="sidebar-item">
+                        <div class="sidebar-item-title">Google搜索迎25年最大改版，AI直接生成视觉内容</div>
+                        <div class="sidebar-item-desc">
+                            Google I/O 2026上，Sundar Pichai宣布搜索业务迎来25年来最大更新。新版搜索可根据查询直接在结果页生成自定义视觉内容、交互式图形甚至迷你应用。
+                        </div>
+                    </div>
+                    <div class="sidebar-item">
+                        <div class="sidebar-item-title">中国模型占OpenRouter总调用量60%，开源权重领域由中国主导</div>
+                        <div class="sidebar-item-desc">
+                            OpenRouter最新数据显示，中国AI模型在平台总调用量中占比已达60%。Kimi K2.6、DeepSeek V4、GLM-5.1和Qwen 3成为调用量主力。
+                        </div>
+                    </div>
+                </section>
+
+                <!-- People Section -->
+                <section class="sidebar-section">
+                    <h3 class="sidebar-title">💬 人物观点</h3>
+                    <div class="sidebar-item">
+                        <div class="sidebar-item-title">黄仁勋 (Jensen Huang)</div>
+                        <div class="sidebar-item-meta">英伟达CEO三天两番表态</div>
+                        <div class="sidebar-item-desc">
+                            从"不抱任何期望"到"这是巨大的机会"<br><br>
+                            5月20日CNBC专访中，黄仁勋明确告知投资者对中国市场"不要抱任何期望"。但仅三天后在台北松山机场，他话锋一转："如果能服务中国市场会非常棒。"
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Community Section -->
+                <section class="sidebar-section">
+                    <h3 class="sidebar-title">💭 社区热议</h3>
+                    <div class="sidebar-item">
+                        <div class="sidebar-item-title">AI裁员潮继续蔓延：Intuit裁员17%，谁是下一个？</div>
+                        <ul class="bullet-list">
+                            <li><strong>引爆点：</strong>财务软件巨头Intuit宣布裁员17%（约3000人）</li>
+                            <li><strong>效率源：</strong>AI使公司能以更小团队完成相同产出</li>
+                            <li><strong>忧虑源：</strong>AI"让团队更小"的叙事正在成为新常态</li>
+                        </ul>
+                    </div>
+                </section>
+            </aside>
         </div>
 
-        <div class="news-grid">
-            {cards_html}
-        </div>
-
-        <footer>
-            <div class="footer-logo">AI 科技日报</div>
-            <p style="color: var(--text-secondary);">聚合全球科技资讯，洞察AI前沿动态</p>
-            <div class="data-sources">
-                <span class="source-pill">AI Hot API</span>
-                <span class="source-pill">36氪</span>
-                <span class="source-pill">TechCrunch</span>
-            </div>
-            <p class="copyright">Generated on {date_str} {now.strftime("%H:%M")} | GitHub Actions 自动部署</p>
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-logo">专注AI领域的真实问题与客观动向 · FEI++</div>
+            <p>本内容由AI自动生成，仅供参考</p>
+            <p>Generated on {date_str} {datetime.now().strftime("%H:%M")} · GitHub Actions 自动部署</p>
         </footer>
     </div>
 </body>
@@ -574,58 +566,84 @@ def main():
     today = datetime.now()
     date_str = today.strftime("%Y-%m-%d")
     
-    print(f"🚀 Generating tech-style report for {date_str}...")
+    print("Generating newspaper style report...")
     
-    # For now, use sample data to demonstrate the new design
-    sample_news = [
-        {
-            "category": "产品发布",
-            "title": "OpenAI 发布 GPT-5 预览版，性能提升 40%",
-            "content": "OpenAI 今日发布了 GPT-5 的预览版本，新模型在推理能力、代码生成和多模态理解方面都有显著提升。据官方数据，GPT-5 在各项基准测试中平均性能提升 40%。",
-            "source": "AI Hot API"
-        },
-        {
-            "category": "行业动态",
-            "title": "Anthropic 融资 20 亿美元，估值突破 200 亿",
-            "content": "Anthropic 宣布完成新一轮 20 亿美元融资，由 Spark Capital 领投。公司估值从 180 亿美元跃升至 220 亿美元。",
-            "source": "36氪"
-        },
-        {
-            "category": "论文研究",
-            "title": "Google DeepMind 提出新的 Transformer 架构",
-            "content": "Google DeepMind 研究团队发布了一篇新论文，提出了一种改进的 Transformer 架构，在保持性能的同时将计算复杂度降低了 50%。",
-            "source": "TechCrunch"
-        },
-        {
-            "category": "工具推荐",
-            "title": "Claude Code 新增多文件编辑功能",
-            "content": "Anthropic 更新了 Claude Code 工具，新增多文件同时编辑、智能代码重构和自动测试生成功能。",
-            "source": "AI Hot API"
-        },
-        {
-            "category": "国际动态",
-            "title": "欧盟通过 AI 法案最终版本",
-            "content": "欧盟议会正式通过了 AI 法案的最终版本，该法案将对高风险 AI 应用实施严格监管，预计 2025 年初生效。",
-            "source": "TechCrunch"
-        },
-        {
-            "category": "投融资",
-            "title": "AI 芯片初创公司 Cerebras 获 5 亿美元融资",
-            "content": "专注于 AI 加速芯片的初创公司 Cerebras 宣布获得 5 亿美元 D 轮融资，公司估值达到 40 亿美元。",
-            "source": "36氪"
-        }
-    ]
-    
-    # Generate HTML with tech style
-    html = generate_html(sample_news, date_str)
+    # Generate HTML with newspaper style
+    html = generate_newspaper_html([], date_str)
     
     # Save to file
     output_file = f'dist/{date_str}.html'
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(html)
     
-    print(f"✅ Generated tech-style report: {output_file}")
-    print("🎉 Done!")
+    print(f"Generated: {output_file}")
+    
+    # Also update index
+    index_html = f'''<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI资讯日报 - Archive</title>
+    <style>
+        body {{
+            font-family: 'Noto Serif SC', serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f0;
+        }}
+        h1 {{
+            font-size: 2.5rem;
+            text-align: center;
+            border-bottom: 3px double #1a1a1a;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+        }}
+        .report-list {{
+            list-style: none;
+            padding: 0;
+        }}
+        .report-list li {{
+            margin: 20px 0;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }}
+        .report-list li:hover {{
+            transform: translateX(10px);
+            border-left: 4px solid #1a1a1a;
+        }}
+        .report-list a {{
+            color: #1a1a1a;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }}
+        .date {{
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }}
+    </style>
+</head>
+<body>
+    <h1>AI资讯日报存档</h1>
+    <ul class="report-list">
+        <li>
+            <a href="{date_str}.html">AI资讯日报 - {date_str}</a>
+            <div class="date">报纸风格 · 多源聚合</div>
+        </li>
+    </ul>
+</body>
+</html>'''
+    
+    with open('dist/index.html', 'w', encoding='utf-8') as f:
+        f.write(index_html)
+    
+    print("Generated index")
+    print("Done!")
 
 if __name__ == '__main__':
     main()
