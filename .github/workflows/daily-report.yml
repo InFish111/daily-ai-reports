@@ -11,10 +11,6 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-
 jobs:
   generate-report:
     runs-on: ubuntu-latest
@@ -37,32 +33,12 @@ jobs:
         run: |
           python scripts/generate_report.py
           
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './dist'
-          
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-        
-      - name: Send notification to Feishu
-        if: success()
-        env:
-          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
-        run: |
-          DATE=$(date +%Y-%m-%d)
-          curl -X POST "$FEISHU_WEBHOOK" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"msg_type\": \"text\",
-              \"content\": {
-                \"text\": \"📰 AI 科技日报已生成\\n日期: $DATE\\n链接: https://infish111.github.io/daily-ai-reports/$DATE.html\"
-              }
-            }" || true
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
           
       - name: Report status
         if: success()
