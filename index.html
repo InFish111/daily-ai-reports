@@ -51,23 +51,40 @@
             color: #94a3b8;
             margin-bottom: 30px;
         }
+        .info {
+            background: #1a1a25;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #00d4ff;
+            margin-bottom: 30px;
+        }
+        .info p {
+            margin: 5px 0;
+            color: #94a3b8;
+        }
     </style>
 </head>
 <body>
     <h1>📰 AI 科技日报存档</h1>
-    <p class="subtitle">每日AI科技新闻自动汇总</p>
+    <p class="subtitle">每日AI科技新闻自动汇总 - AI Hot 数据源</p>
+    
+    <div class="info">
+        <p>⏰ 每天 08:30 自动生成</p>
+        <p>📊 数据来源: AI Hot API</p>
+        <p>🤖 推送方式: GitHub Actions → GitHub Pages</p>
+    </div>
+    
     <ul class="report-list">
+        
         <li>
-            <a href="daily-report-2026-05-24.html">AI 科技日报 - 2026年5月24日</a>
-            <div class="date">2026年5月24日 | 产品发布、行业动态、投融资</div>
+            <a href="2026-05-25.html">AI 科技日报 - 2026年05月25日</a>
+            <div class="date">2026年05月25日</div>
         </li>
-        <li>
-            <a href="daily-report-2026-05-24-editorial.html">AI 科技日报 - 2026年5月24日（社论版）</a>
-            <div class="date">2026年5月24日 | 深度分析与社论</div>
-        </li>
+        
     </ul>
+    
     <footer style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #27273a; text-align: center; color: #64748b; font-size: 0.85rem;">
-        <p>每天 08:30 自动生成 | 数据源：AI HOT API</p>
+        <p>GitHub: InFish111/daily-ai-reports</p>
     </footer>
 </body>
 </html>

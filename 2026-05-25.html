@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 科技日报 - 2026-05-25</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a25;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-orange: #f97316;
+            --accent-green: #22c55e;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #27273a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(ellipse 80% 50% at 20% 40%, rgba(168, 85, 247, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(0, 212, 255, 0.06) 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 0 50px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .masthead {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 4.5rem;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-cyan) 50%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            color: var(--text-muted);
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .date-line {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .date-line::before,
+        .date-line::after {
+            content: '';
+            width: 60px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-color, var(--accent-cyan));
+        }
+
+        .card-featured { grid-column: span 8; }
+        .card-side { grid-column: span 4; }
+        .card-half { grid-column: span 6; }
+        .card-full { grid-column: span 12; }
+
+        .card-cyan { --accent-color: var(--accent-cyan); }
+        .card-purple { --accent-color: var(--accent-purple); }
+        .card-orange { --accent-color: var(--accent-orange); }
+        .card-green { --accent-color: var(--accent-green); }
+
+        .category-tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent-color, var(--accent-cyan));
+            margin-bottom: 12px;
+            padding: 4px 10px;
+            border: 1px solid var(--accent-color, var(--accent-cyan));
+            border-radius: 4px;
+            opacity: 0.8;
+        }
+
+        .card h2 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            line-height: 1.3;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .card h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .news-list {
+            list-style: none;
+        }
+
+        .news-list li {
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .news-list li:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        footer {
+            margin-top: 60px;
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .footer-brand {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 900px) {
+            .masthead { font-size: 3rem; }
+            .card-featured, .card-side, .card-half { grid-column: span 12; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+        .card:nth-child(6) { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="masthead">AI 科技日报</h1>
+            <p class="tagline">Artificial Intelligence Daily</p>
+            <div class="date-line">
+                <span>2026-05-25</span>
+                <span>星期一</span>
+                <span>AI Hot 数据源</span>
+            </div>
+        </header>
+
+        <div class="news-grid">
+            
+            <article class="card card-featured card-cyan">
+                <span class="category-tag">产品发布</span>
+                <h2>AI Hot API 数据获取中</h2>
+                <p>正在从 AI Hot API 获取最新科技新闻。如果看到此消息，说明 API 配置可能需要检查。</p>
+                
+                <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">来源: System</p>
+                
+            </article>
+            
+            <article class="card card-side card-purple">
+                <span class="category-tag">行业动态</span>
+                <h2>GitHub Actions 自动部署</h2>
+                <p>日报系统已通过 GitHub Actions 自动部署，每天 08:30 自动生成。</p>
+                
+                <p style="margin-top: 12px; font-size: 0.85rem; color: var(--text-muted);">来源: GitHub Actions</p>
+                
+            </article>
+            
+        </div>
+
+        <footer>
+            <div class="footer-brand">AI 科技日报</div>
+            <p>数据来源于 AI Hot API | 仅供信息分享，不构成投资建议</p>
+            <p style="margin-top: 8px;">Generated on 2026-05-25 13:10 | 自动推送</p>
+        </footer>
+    </div>
+</body>
+</html>
