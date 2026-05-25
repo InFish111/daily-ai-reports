@@ -16,9 +16,12 @@ def fetch_aihot_news():
     api_url = os.environ.get('AIHOT_API_URL', 'https://aihot.virxact.com/api/public/daily')
     
     try:
+        print(f"Fetching from: {api_url}")
         response = requests.get(api_url, timeout=30)
         response.raise_for_status()
-        return response.json()
+        data = response.json()
+        print(f"Got {len(data.get('news', []))} news items")
+        return data
     except Exception as e:
         print(f"Error fetching from AIHOT API: {e}")
         return get_mock_data()
@@ -30,15 +33,22 @@ def get_mock_data():
         "news": [
             {
                 "category": "产品发布",
-                "title": "请配置 AIHOT_API_URL 环境变量以获取实时数据",
-                "content": "当前显示的是示例数据。请在 GitHub Secrets 中设置 AIHOT_API_URL。",
+                "title": "AI Hot API 数据获取中",
+                "content": "正在从 AI Hot API 获取最新科技新闻。如果看到此消息，说明 API 配置可能需要检查。",
                 "source": "System"
+            },
+            {
+                "category": "行业动态", 
+                "title": "GitHub Actions 自动部署",
+                "content": "日报系统已通过 GitHub Actions 自动部署，每天 08:30 自动生成。",
+                "source": "GitHub Actions"
             }
         ]
     }
 
 def get_category_color(category):
     """Map category to accent color"""
+    category = str(category).strip()
     colors = {
         '产品发布': 'cyan',
         '产品更新': 'purple', 
@@ -47,15 +57,20 @@ def get_category_color(category):
         '职场趋势': 'cyan',
         '并购动态': 'green',
         '论文研究': 'green',
-        '工具推荐': 'orange'
+        '工具推荐': 'orange',
+        '融资': 'purple',
+        '投资': 'purple',
     }
     return colors.get(category, 'cyan')
 
 def get_weekday_cn(date_str):
     """Get Chinese weekday name"""
-    weekdays = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
-    date = datetime.strptime(date_str, "%Y-%m-%d")
-    return weekdays[date.weekday()]
+    try:
+        date = datetime.strptime(date_str, "%Y-%m-%d")
+        weekdays = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
+        return weekdays[date.weekday()]
+    except:
+        return ""
 
 def generate_html(data, date_str):
     """Generate HTML from data using template"""
@@ -291,7 +306,7 @@ def generate_html(data, date_str):
             <div class="date-line">
                 <span>{{ date_str }}</span>
                 <span>{{ weekday }}</span>
-                <span>自动生成</span>
+                <span>AI Hot 数据源</span>
             </div>
         </header>
 
@@ -310,8 +325,8 @@ def generate_html(data, date_str):
 
         <footer>
             <div class="footer-brand">AI 科技日报</div>
-            <p>数据来源于 AI HOT API | 仅供信息分享，不构成投资建议</p>
-            <p style="margin-top: 8px;">Generated on {{ date_str }} {{ time_str }}</p>
+            <p>数据来源于 AI Hot API | 仅供信息分享，不构成投资建议</p>
+            <p style="margin-top: 8px;">Generated on {{ date_str }} {{ time_str }} | 自动推送</p>
         </footer>
     </div>
 </body>
@@ -398,11 +413,35 @@ def generate_index(dates):
         .date {
             color: #64748b;
             font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .subtitle {
+            color: #94a3b8;
+            margin-bottom: 30px;
+        }
+        .info {
+            background: #1a1a25;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #00d4ff;
+            margin-bottom: 30px;
+        }
+        .info p {
+            margin: 5px 0;
+            color: #94a3b8;
         }
     </style>
 </head>
 <body>
     <h1>📰 AI 科技日报存档</h1>
+    <p class="subtitle">每日AI科技新闻自动汇总 - AI Hot 数据源</p>
+    
+    <div class="info">
+        <p>⏰ 每天 08:30 自动生成</p>
+        <p>📊 数据来源: AI Hot API</p>
+        <p>🤖 推送方式: GitHub Actions → GitHub Pages</p>
+    </div>
+    
     <ul class="report-list">
         {% for date in dates %}
         <li>
@@ -411,6 +450,10 @@ def generate_index(dates):
         </li>
         {% endfor %}
     </ul>
+    
+    <footer style="margin-top: 60px; padding-top: 20px; border-top: 1px solid #27273a; text-align: center; color: #64748b; font-size: 0.85rem;">
+        <p>GitHub: InFish111/daily-ai-reports</p>
+    </footer>
 </body>
 </html>''')
     
@@ -425,9 +468,9 @@ def main():
     today = datetime.now()
     date_str = today.strftime("%Y-%m-%d")
     
-    print(f"Generating report for {date_str}...")
+    print(f"🚀 Generating report for {date_str}...")
     
-    # Fetch data
+    # Fetch data from AI Hot API
     data = fetch_aihot_news()
     
     # Generate HTML
@@ -438,38 +481,31 @@ def main():
     with open(output_file, 'w', encoding='utf-8') as f:
         f.write(html)
     
-    print(f"Generated: {output_file}")
+    print(f"✅ Generated: {output_file}")
     
-    # Copy existing reports if they exist
-    if os.path.exists('html-files'):
-        for f in os.listdir('html-files'):
-            if f.endswith('.html') and f != 'index.html':
-                src = os.path.join('html-files', f)
-                dst = os.path.join('dist', f)
-                if not os.path.exists(dst):
-                    shutil.copy2(src, dst)
-                    print(f"Copied existing: {f}")
-    
-    # Generate index
+    # Generate index with all available reports
     dates = []
-    for f in sorted(os.listdir('dist'), reverse=True):
-        if f.endswith('.html') and f != 'index.html':
-            date_str_file = f.replace('.html', '')
-            try:
-                d = datetime.strptime(date_str_file, "%Y-%m-%d")
-                dates.append({
-                    'file': f,
-                    'display': d.strftime("%Y年%m月%d日")
-                })
-            except:
-                pass
+    
+    # Check for existing reports in dist
+    if os.path.exists('dist'):
+        for f in sorted(os.listdir('dist'), reverse=True):
+            if f.endswith('.html') and f != 'index.html':
+                date_str_file = f.replace('.html', '')
+                try:
+                    d = datetime.strptime(date_str_file, "%Y-%m-%d")
+                    dates.append({
+                        'file': f,
+                        'display': d.strftime("%Y年%m月%d日")
+                    })
+                except:
+                    pass
     
     index_html = generate_index(dates)
     with open('dist/index.html', 'w', encoding='utf-8') as f:
         f.write(index_html)
     
-    print(f"Generated index with {len(dates)} reports")
-    print("Done!")
+    print(f"✅ Generated index with {len(dates)} reports")
+    print("🎉 Done!")
 
 if __name__ == '__main__':
     main()

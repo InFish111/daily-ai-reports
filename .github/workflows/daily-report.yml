@@ -49,8 +49,24 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
         
-      - name: Send notification
+      - name: Send notification to Feishu
+        if: success()
+        env:
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          curl -X POST "$FEISHU_WEBHOOK" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"msg_type\": \"text\",
+              \"content\": {
+                \"text\": \"📰 AI 科技日报已生成\\n日期: $DATE\\n链接: https://infish111.github.io/daily-ai-reports/$DATE.html\"
+              }
+            }" || true
+          
+      - name: Report status
         if: success()
         run: |
-          echo "Daily report deployed successfully!"
-          echo "URL: ${{ steps.deployment.outputs.page_url }}"
+          echo "✅ Daily report generated successfully!"
+          echo "📅 Date: $(date +%Y-%m-%d)"
+          echo "🌐 URL: https://infish111.github.io/daily-ai-reports/"
